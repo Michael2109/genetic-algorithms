@@ -1,4 +1,4 @@
-mod fish;
+mod entity;
 
 extern crate piston;
 extern crate graphics;
@@ -69,24 +69,33 @@ fn main() {
         rotation: 0.0,
     };
 
-    fish::print_hello();
+    entity::print_hello();
 
-    let mut vec = Vec::new();
-    vec.push(
-        fish::Fish {
-            gl: GlGraphics::new(opengl),
+    let fish = entity::Fish {
+        gl: GlGraphics::new(opengl),
 
-            mass: 100.0,
-            fish_food_ratio: 1.0,
-            target_mass: 1.0,
-            target_mass_range: 100.0,
+        mass: 100.0,
+        fish_food_ratio: 1.0,
+        target_mass: 1.0,
+        target_mass_range: 100.0,
 
-            hunger:  Cell::new(1.0),
-            multiply_time:  Cell::new(1.0),
-            rotation:  Cell::new(0.0)
+        x: Cell::new(10.0),
+        y: Cell::new(10.0),
+        hunger: Cell::new(1.0),
+        multiply_time: Cell::new(1.0),
+        rotation: Cell::new(0.0),
+    };
 
-        }
-    );
+    let food = entity::Food {
+        gl: GlGraphics::new(opengl),
+
+        mass: 100.0,
+
+        x: Cell::new(50.0),
+        y: Cell::new(50.0)
+    };
+
+    let mut vec: Vec<Box<entity::Entity>> = vec![Box::new(fish), Box::new(food)];
 
     let mut events = Events::new(EventSettings::new());
     while let Some(e) = events.next(&mut window) {
