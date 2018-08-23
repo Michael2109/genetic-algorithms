@@ -11,16 +11,23 @@ use piston::input::*;
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL};
 use std::cell::Cell;
+use entity::{Entity, Fish, Food};
 
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
-    fish: Vec<entity::Fish>,
-    food: Vec<entity::Food>
+    fish: Vec<Fish>,
+    food: Vec<Food>
 }
 
 impl App {
     fn update(&mut self, args: &UpdateArgs) {
+        for mut f in &self.fish {
+            f.update(args);
+        }
 
+        for f in &self.food {
+            f.update(args);
+        }
     }
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
@@ -32,16 +39,11 @@ impl App {
         let fish_rectangle = rectangle::square(0.0, 0.0, 50.0);
         let food_rectangle = rectangle::square(0.0, 0.0, 20.0);
 
-        let (x, y) = ((args.width / 2) as f64,
-                      (args.height / 2) as f64);
-
-        self.gl.draw(args.viewport(), |c, gl| {
-            // Clear the screen.
+        self.gl.draw(args.viewport(), |_, gl| {
             clear(BLACK, gl);
         });
 
         for f in &self.fish {
-
             self.gl.draw(args.viewport(), |c, gl| {
 
                 let transform = c.transform.trans(f.x.get(), f.y.get())
@@ -54,7 +56,6 @@ impl App {
         }
 
         for f in &self.food {
-
             self.gl.draw(args.viewport(), |c, gl| {
 
                 let transform = c.transform.trans(f.x.get(), f.y.get())
@@ -65,7 +66,6 @@ impl App {
             });
         }
     }
-
 }
 
 fn main() {
@@ -90,9 +90,7 @@ fn main() {
     };
 
 
-    let fish = entity::Fish {
-        gl: GlGraphics::new(opengl),
-
+    let fish = Fish {
         mass: 100.0,
         fish_food_ratio: 1.0,
         target_mass: 1.0,
@@ -105,9 +103,7 @@ fn main() {
         rotation: Cell::new(0.0),
     };
 
-    let food = entity::Food {
-        gl: GlGraphics::new(opengl),
-
+    let food = Food {
         mass: 100.0,
 
         x: Cell::new(500.0),
@@ -119,12 +115,12 @@ fn main() {
 
     let mut events = Events::new(EventSettings::new());
     while let Some(e) = events.next(&mut window) {
+        if let Some(u) = e.update_args() {
+            app.update(&u);
+        }
         if let Some(r) = e.render_args() {
             app.render(&r);
         }
 
-        if let Some(u) = e.update_args() {
-            app.update(&u);
-        }
     }
 }

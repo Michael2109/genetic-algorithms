@@ -4,17 +4,9 @@ extern crate glutin_window;
 extern crate opengl_graphics;
 
 use piston::input::*;
-use glutin_window::GlutinWindow as Window;
-use opengl_graphics::{ GlGraphics };
 use std::cell::Cell;
 
-pub fn print_hello() {
-    println!("Hello, world!");
-}
-
 pub struct Fish {
-    pub gl: GlGraphics, // OpenGL drawing backend.
-
     pub mass: f64,
     pub fish_food_ratio: f64,
     pub target_mass: f64,
@@ -28,8 +20,6 @@ pub struct Fish {
 }
 
 pub struct Food {
-    pub gl: GlGraphics, // OpenGL drawing backend.
-
     pub mass: f64,
 
     pub x: Cell<f64>,
@@ -37,17 +27,18 @@ pub struct Food {
 }
 
 pub trait Entity {
-    fn update(mut self, args: &UpdateArgs);
+    fn update(&self, args: &UpdateArgs);
 }
 
 impl Entity for Fish {
 
-    fn update(mut self, _args: &UpdateArgs) {
+    fn update(&self, args: &UpdateArgs) {
+        self.x.set(self.x.get() + 1.0)
     }
 }
 
 impl Entity for Food {
 
-    fn update(mut self, _args: &UpdateArgs) {
+    fn update(&self, args: &UpdateArgs) {
     }
 }
