@@ -13,26 +13,25 @@ use opengl_graphics::{GlGraphics, OpenGL};
 use std::cell::Cell;
 
 pub struct App {
-    gl: GlGraphics,
-    // OpenGL drawing backend.
-    rotation: f64,   // Rotation for the square.
+    gl: GlGraphics, // OpenGL drawing backend.
     fish: Vec<entity::Fish>,
     food: Vec<entity::Food>
 }
 
 impl App {
     fn update(&mut self, args: &UpdateArgs) {
-        // Rotate 2 radians per second.
-        self.rotation += 2.0 * args.dt;
+
     }
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
 
-        const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 0.0];
+        const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 1.0];
         const RED: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
+        const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
 
-        let square = rectangle::square(0.0, 0.0, 50.0);
-        let rotation = self.rotation;
+        let fish_rectangle = rectangle::square(0.0, 0.0, 50.0);
+        let food_rectangle = rectangle::square(0.0, 0.0, 20.0);
+
         let (x, y) = ((args.width / 2) as f64,
                       (args.height / 2) as f64);
 
@@ -46,11 +45,11 @@ impl App {
             self.gl.draw(args.viewport(), |c, gl| {
 
                 let transform = c.transform.trans(f.x.get(), f.y.get())
-                    .rot_rad(rotation)
+                    .rot_rad(f.rotation.get())
                     .trans(-25.0, -25.0);
 
                 // Draw a box rotating around the middle of the screen.
-                rectangle(RED, square, transform, gl);
+                ellipse(RED, fish_rectangle, transform, gl);
             });
         }
 
@@ -59,11 +58,10 @@ impl App {
             self.gl.draw(args.viewport(), |c, gl| {
 
                 let transform = c.transform.trans(f.x.get(), f.y.get())
-                    .rot_rad(rotation)
-                    .trans(-25.0, -25.0);
+                    .trans(-10.0, -10.0);
 
                 // Draw a box rotating around the middle of the screen.
-                rectangle(RED, square, transform, gl);
+                ellipse(GREEN, food_rectangle, transform, gl);
             });
         }
     }
@@ -87,7 +85,6 @@ fn main() {
     // Create a new game and run it.
     let mut app = App {
         gl: GlGraphics::new(opengl),
-        rotation: 0.0,
         fish: Vec::new(),
         food: Vec::new()
     };
