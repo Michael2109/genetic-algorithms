@@ -22,11 +22,7 @@ pub struct App {
 impl App {
     fn update(&mut self, args: &UpdateArgs) {
         for mut f in &self.fish {
-            f.update(args);
-        }
-
-        for f in &self.food {
-            f.update(args);
+            f.update(args, self.food);
         }
     }
     fn render(&mut self, args: &RenderArgs) {
@@ -89,23 +85,22 @@ fn main() {
         food: Vec::new()
     };
 
-
     let fish = Fish {
-        mass: 100.0,
-        fish_food_ratio: 1.0,
+        acceleration: 1.0,
         target_mass: 1.0,
-        target_mass_range: 100.0,
+        range: 100.0,
+        multiply_time: Cell::new(1.0),
 
         x: Cell::new(10.0),
         y: Cell::new(10.0),
-        hunger: Cell::new(1.0),
-        multiply_time: Cell::new(1.0),
+        dx: Cell::new(0.0),
+        dy: Cell::new(0.0),
         rotation: Cell::new(0.0),
+        energy: Cell::new(1.0)
     };
 
     let food = Food {
-        mass: 100.0,
-
+        energy: 100.0,
         x: Cell::new(500.0),
         y: Cell::new(500.0),
     };
