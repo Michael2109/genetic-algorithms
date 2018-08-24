@@ -32,7 +32,7 @@ impl SimulationTrait for Simulation {
 
     fn update(&mut self) {
         for mut f in &self.fish {
-            f.update(&self.food);
+            f.update(&self);
         }
     }
 
