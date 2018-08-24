@@ -1,4 +1,5 @@
 mod entity;
+mod simulation;
 
 extern crate piston;
 extern crate graphics;
@@ -10,20 +11,21 @@ use piston::event_loop::*;
 use piston::input::*;
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL};
-use std::cell::Cell;
-use entity::{Entity, Fish, Food};
+use simulation::{Simulation, SimulationTrait};
 
 pub struct App {
-    gl: GlGraphics, // OpenGL drawing backend.
-    fish: Vec<Fish>,
-    food: Vec<Food>
+    gl: GlGraphics,
+    simulation: Simulation
 }
 
 impl App {
-    fn update(&mut self, args: &UpdateArgs) {
-        for mut f in &self.fish {
-            f.update(args, self.food);
-        }
+
+    fn initialize(&mut self) {
+        self.simulation.initialize();
+    }
+
+    fn update(&mut self) {
+        self.simulation.update();
     }
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
@@ -39,10 +41,10 @@ impl App {
             clear(BLACK, gl);
         });
 
-        for f in &self.fish {
+        for f in &self.simulation.fish {
             self.gl.draw(args.viewport(), |c, gl| {
 
-                let transform = c.transform.trans(f.x.get(), f.y.get())
+                let transform = c.transform.trans(f.position.get().x, f.position.get().y)
                     .rot_rad(f.rotation.get())
                     .trans(-25.0, -25.0);
 
@@ -51,10 +53,10 @@ impl App {
             });
         }
 
-        for f in &self.food {
+        for f in &self.simulation.food {
             self.gl.draw(args.viewport(), |c, gl| {
 
-                let transform = c.transform.trans(f.x.get(), f.y.get())
+                let transform = c.transform.trans(f.position.get().x, f.position.get().y)
                     .trans(-10.0, -10.0);
 
                 // Draw a box rotating around the middle of the screen.
@@ -81,37 +83,18 @@ fn main() {
     // Create a new game and run it.
     let mut app = App {
         gl: GlGraphics::new(opengl),
-        fish: Vec::new(),
-        food: Vec::new()
+        simulation: Simulation {
+            fish: Vec::new(),
+            food: Vec::new()
+        }
     };
 
-    let fish = Fish {
-        acceleration: 1.0,
-        target_mass: 1.0,
-        range: 100.0,
-        multiply_time: Cell::new(1.0),
-
-        x: Cell::new(10.0),
-        y: Cell::new(10.0),
-        dx: Cell::new(0.0),
-        dy: Cell::new(0.0),
-        rotation: Cell::new(0.0),
-        energy: Cell::new(1.0)
-    };
-
-    let food = Food {
-        energy: 100.0,
-        x: Cell::new(500.0),
-        y: Cell::new(500.0),
-    };
-
-    app.fish.push(fish);
-    app.food.push(food);
+    app.initialize();
 
     let mut events = Events::new(EventSettings::new());
     while let Some(e) = events.next(&mut window) {
         if let Some(u) = e.update_args() {
-            app.update(&u);
+            app.update();
         }
         if let Some(r) = e.render_args() {
             app.render(&r);

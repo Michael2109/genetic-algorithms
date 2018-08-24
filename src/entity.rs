@@ -1,10 +1,6 @@
-extern crate piston;
-extern crate graphics;
-extern crate glutin_window;
-extern crate opengl_graphics;
-
-use piston::input::*;
 use std::cell::Cell;
+
+use point2d::Point2D;
 
 pub struct Fish {
     pub acceleration: f64,
@@ -12,8 +8,7 @@ pub struct Fish {
     pub range: f64,
     pub multiply_time: Cell<f64>,
 
-    pub x: Cell<f64>,
-    pub y: Cell<f64>,
+    pub position: Cell<Point2D>,
     pub dx: Cell<f64>,
     pub dy: Cell<f64>,
     pub rotation: Cell<f64>,
@@ -22,24 +17,26 @@ pub struct Fish {
 
 pub struct Food {
     pub energy: f64,
-    pub x: Cell<f64>,
-    pub y: Cell<f64>
+    pub position: Cell<Point2D>
 }
 
 pub trait Entity {
-    fn update(&self, args: &UpdateArgs, food: Vec<Food>);
-    fn getTarget(&self, food: Vec<Food>) -> (i64, i64);
+    fn update(&self, food: &Vec<Food>);
+    fn get_target(&self, food: &Vec<Food>) -> (f64, f64);
 }
 
 impl Entity for Fish {
 
-    fn update(&self, args: &UpdateArgs, food: Vec<Food>) {
-        self.x.set(self.x.get() + 1.0);
+    fn update(&self, food: &Vec<Food>) {
+        self.position.x.set(self.position.x.get() + 1.0);
+
+        let targetPos = self.getTarget(food);
 
     }
 
-    fn getTarget(&self, food: Vec<Food>) -> (i64, i64) {
-        let in_range = food.into_iter().filter(|f| ((self.x.get() - f.x.get()).powf(2.0) + (self.y.get() - f.y.get()).powf(2.0)).sqrt() < self.range).collect()[0];
-        (in_range.x.get(), in_range.y.get())
+    fn get_target(&self, food: &Vec<Food>) -> (f64, f64) {
+        //let in_range = food.into_iter().filter(|f| ((self.x.get() - f.x.get()).powf(2.0) + (self.y.get() - f.y.get()).powf(2.0)).sqrt() < self.range).collect()[0];
+        //(in_range.x.get(), in_range.y.get())
+        (food[0].position.x.get(), food[0].position.y.get())
     }
 }
