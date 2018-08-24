@@ -1,6 +1,6 @@
 use std::cell::Cell;
 
-use point2d::Point2D;
+use point::Point2D;
 
 pub struct Fish {
     pub acceleration: f64,
@@ -8,7 +8,7 @@ pub struct Fish {
     pub range: f64,
     pub multiply_time: Cell<f64>,
 
-    pub position: Cell<Point2D>,
+    pub position: Point2D,
     pub dx: Cell<f64>,
     pub dy: Cell<f64>,
     pub rotation: Cell<f64>,
@@ -17,7 +17,7 @@ pub struct Fish {
 
 pub struct Food {
     pub energy: f64,
-    pub position: Cell<Point2D>
+    pub position: Point2D
 }
 
 pub trait Entity {
@@ -30,7 +30,7 @@ impl Entity for Fish {
     fn update(&self, food: &Vec<Food>) {
         self.position.x.set(self.position.x.get() + 1.0);
 
-        let targetPos = self.getTarget(food);
+        let targetPos = self.get_target(food);
 
     }
 

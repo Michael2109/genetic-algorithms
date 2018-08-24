@@ -1,5 +1,6 @@
 mod entity;
 mod simulation;
+mod point;
 
 extern crate piston;
 extern crate graphics;
@@ -44,7 +45,7 @@ impl App {
         for f in &self.simulation.fish {
             self.gl.draw(args.viewport(), |c, gl| {
 
-                let transform = c.transform.trans(f.position.get().x, f.position.get().y)
+                let transform = c.transform.trans(f.position.x.get(), f.position.y.get())
                     .rot_rad(f.rotation.get())
                     .trans(-25.0, -25.0);
 
@@ -56,7 +57,7 @@ impl App {
         for f in &self.simulation.food {
             self.gl.draw(args.viewport(), |c, gl| {
 
-                let transform = c.transform.trans(f.position.get().x, f.position.get().y)
+                let transform = c.transform.trans(f.position.x.get(), f.position.y.get())
                     .trans(-10.0, -10.0);
 
                 // Draw a box rotating around the middle of the screen.
