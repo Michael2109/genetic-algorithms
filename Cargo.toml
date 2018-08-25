@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Michael <michael.jhaywoods@gmail.com>"]
 
 [dependencies]
+rand = "*"
 piston = "0.37.0"
 piston2d-graphics = "0.26.0"
 pistoncore-glutin_window = "0.47.0"

@@ -2,6 +2,7 @@ mod entity;
 mod simulation;
 mod vector2d;
 
+extern crate rand;
 extern crate piston;
 extern crate graphics;
 extern crate glutin_window;
@@ -74,7 +75,7 @@ fn main() {
     // Create an Glutin window.
     let mut window: Window = WindowSettings::new(
         "spinning-square",
-        [800, 600],
+        [1200, 1000],
     )
         .opengl(opengl)
         .exit_on_esc(true)
