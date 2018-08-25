@@ -1,6 +1,6 @@
 use std::cell::Cell;
 
-use point::Point2D;
+use vector2d::Vector2D;
 use entity::{Entity, Fish, Food};
 
 pub struct Simulation {
@@ -43,24 +43,26 @@ impl SimulationTrait for Simulation {
             range: 100.0,
             multiply_time: Cell::new(1.0),
 
-            position: Point2D {
+            position: Vector2D {
                 x: Cell::new(10.0),
                 y: Cell::new(10.0)
             },
             dx: Cell::new(0.0),
             dy: Cell::new(0.0),
             rotation: Cell::new(0.0),
-            energy: Cell::new(1.0)
+            energy: Cell::new(1.0),
+            alive: Cell::new(true)
         }
     }
 
     fn create_food(&mut self) -> Food {
         Food {
             energy: 100.0,
-            position: Point2D {
+            position: Vector2D {
                 x: Cell::new(500.0),
                 y: Cell::new(500.0)
-            }
+            },
+            alive: Cell::new(true)
         }
     }
 }

@@ -1,6 +1,6 @@
 mod entity;
 mod simulation;
-mod point;
+mod vector2d;
 
 extern crate piston;
 extern crate graphics;
@@ -94,7 +94,7 @@ fn main() {
 
     let mut events = Events::new(EventSettings::new());
     while let Some(e) = events.next(&mut window) {
-        if let Some(u) = e.update_args() {
+        if let Some(_) = e.update_args() {
             app.update();
         }
         if let Some(r) = e.render_args() {
